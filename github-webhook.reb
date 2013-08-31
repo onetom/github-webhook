@@ -31,16 +31,17 @@ Rebol [
 	}
 	Description: {
 		Configure by changing the 'port variable and the 'handle function.
+		Remove [print data] from the 'log function to make the script silent.
 	}
 ]
 
 port: 6175
 
-handle: funct[json[string!]] [
+handle: funct [json[string!]] [
 	log json
 ]
 
-log: func [data] [
+log: funct [data] [
 	print data
 	write/append %github-webhook.log rejoin [now " -- " data newline]
 	data
@@ -72,12 +73,7 @@ forever [
 
 		handle find/tail dehex body "payload="
 
-		insert http-port rejoin [
-			"HTTP/1.0 200 OK" crlf
-			"Content-type: text/plain" crlf
-			crlf
-			"OK"
-		]
+		insert http-port rejoin ["HTTP/1.0 204 No Content" crlf crlf]
 	]
 	close http-port
 ]
